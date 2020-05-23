@@ -1,7 +1,18 @@
-plugin: azure_rm
-include_vm_resource_groups:
-- learn-ansible-rg
-auth_source: auto
-keyed_groups:
-- prefix: tag
-  key: tags
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Ansible@0
+  inputs:
+    ansibleInterface: 'remoteMachine'
+    connectionOverSsh: 'SSH - Ansible VM'
+    playbookSourceRemoteMachine: 'agentMachine'
+    playbookRootRemoteMachine: '$(System.DefaultWorkingDirectory)'
+    playbookPathLinkedArtifactOnRemoteMachine: 'users.yml'
+    inventoriesRemoteMachine: 'file'
+    inventoryFileSourceRemoteMachine: 'agentMachine'
+    inventoryFileLinkedArtifactOnRemoteMachine: 'azure_rm.yml'
+    args: '--private-key ~/.ssh/ansible_rsa'
